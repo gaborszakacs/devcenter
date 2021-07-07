@@ -1,3 +1,5 @@
+_Note: the `www` endpoint is now deprecated. Please use the `https://app.bitrise.io/app/APP-SLUG/build/start.json` endpoint instead._
+
 With the Build Trigger API you can start a new build of your app with a simple API call.
 
 You can define parameters for the build like what `branch`, `tag` or _git commit_ to use
@@ -51,7 +53,7 @@ element, or set the JSON object as the value of the `payload` POST parameter.
 jQuery example using the `payload` parameter:
 
 ```
-$.post("https://www.bitrise.io/app/APP-SLUG/build/start.json", {
+$.post("https://app.bitrise.io/app/APP-SLUG/build/start.json", {
     "payload":{
         "hook_info":{
             "type":"bitrise",
@@ -117,12 +119,15 @@ For more information see:
 It's important that this parameter have to be an __array of objects__,
 and that every item of the array have to include
 at least a `mapped_to` (the key of the Environment Variable, without a dollar sign (`$`))
-and a `value` property (the value of the variable).
+and a `value` property (the value of the variable). By default environment variable names inside values will be replaced in triggered build by actual value from target environment. This behavior can be disabled by setting `is_expand` flag to `false`.
 
 Example:
 
 ```
-"environments":[{"mapped_to":"API_TEST_ENV","value":"This is the test value","is_expand":true}]
+"environments":[
+  {"mapped_to":"API_TEST_ENV","value":"This is the test value","is_expand":true},
+  {"mapped_to":"HELP_ENV","value":"$HOME variable contains user's home directory path","is_expand":false},
+]
 ```
 
 ### Workflow to be used for the build
@@ -156,7 +161,7 @@ At the bottom of the popup you can find a `curl` call, based on the parameters y
 A base curl call would look like this (with `master` specified as the `branch` build parameter):
 
 ```
-curl https://www.bitrise.io/app/APP-SLUG/build/start.json --data '{"hook_info":{"type":"bitrise","api_token":"APP-API-TOKEN"},"build_params":{"branch":"master"}}'
+curl https://app.bitrise.io/app/APP-SLUG/build/start.json --data '{"hook_info":{"type":"bitrise","api_token":"APP-API-TOKEN"},"build_params":{"branch":"master"}}'
 ```
 
 A more advanced example: let's say you want to build the __master__ `branch`
@@ -166,6 +171,6 @@ and set a test environment variable (`API_TEST_ENV`),
 the call will look like this:
 
 ```
-curl https://www.bitrise.io/app/APP-SLUG/build/start.json --data '{"hook_info":{"type":"bitrise","api_token":"APP-API-TOKEN"},"build_params":{"branch":"master","commit_message":"Environment in API params test","workflow_id":"deployment","environments":[{"mapped_to":"API_TEST_ENV","value":"This is the test value","is_expand":true}]}}'
+curl https://app.bitrise.io/app/APP-SLUG/build/start.json --data '{"hook_info":{"type":"bitrise","api_token":"APP-API-TOKEN"},"build_params":{"branch":"master","commit_message":"Environment in API params test","workflow_id":"deployment","environments":[{"mapped_to":"API_TEST_ENV","value":"This is the test value","is_expand":true}]}}'
 ```
 
